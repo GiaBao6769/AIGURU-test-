@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+    <form id="REGISTER-FORM" method="POST">
+        <fieldset>
+            <legend>Create new account</legend>
+            <label for="username"><small>Username</small></label>
+            <input type="text" id="username" name="username" autocomplete="off">
+            <br>
+
+            <label for="password"><small>Password</small></label>
+            <input type="password" id="password" name="password" autocomplete="off">
+            <br>
+            
+            <br>
+            <p>Already had an account? <a href="log-in.html">Login</a>.</p>
+            <button>Register</button>
+        </fieldset>
+    </form>
+</body>
+
+<script type='module'>
+
+import {API_BASE} from "./preload.js"
+
+
+document.getElementById("REGISTER-FORM").onsubmit = async e => {
+e.preventDefault();
+
+const username = document.getElementById("username").value;
+
+const password = document.getElementById("password").value;
+
+const res = await fetch(`${API_BASE}/api/register`, {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({ username, password })
+});
+
+const data = await res.json();
+
+if (!res.ok) {
+    alert(data.errors.join("\n"));
+    return;
+}
+
+if (data.success) {
+    window.location.href = "home.html";
+}
+};
+</script>
+
+
+</html>

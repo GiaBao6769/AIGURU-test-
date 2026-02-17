@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+    <form id="REGISTER-FORM" method="POST">
+        <fieldset>
+            <legend>Create new article</legend>
+            <label for="username"><small>Username</small></label>
+            <input type="text" id="username" name="username" autocomplete="off">
+            <br>
+
+            <label for="password"><small>Password</small></label>
+            <input type="password" id="password" name="password" autocomplete="off">
+            <br>
+            
+            <br>
+            <button>Register</button>
+        </fieldset>
+    </form>
+</body>
+
+<script type='module'>
+
+import {API_BASE} from "./preload.js"
+
+document.getElementById("REGISTER-FORM").onsubmit = async e => {
+  e.preventDefault();
+
+  const data = {
+    username: username.value,
+    password: password.value
+  };
+
+  const res = await fetch(`${API_BASE}/api/register`, 
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(data)
+              });
+
+  if (!res.ok) {
+    console.log(data.errors);
+    return;
+  }
+  const dataRes = await res.json();
+  if (dataRes.success) {
+    window.location.href = "home.html";
+  }
+  
+};
+
+</script>
+
+
+</html>

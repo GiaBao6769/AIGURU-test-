@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<h2>Create Diet Tab</h2>
+
+<input id="tabName" placeholder="Tab name">
+<button onclick="createTab()">Create</button>
+
+<h3>Your Tabs</h3>
+<ul id="tabList"></ul>
+
+
+
+<script type="module">
+
+import {API_BASE} from "./preload.js"
+
+
+async function createTab() {
+    const name = document.getElementById("tabName").value;
+
+    const res = await fetch(`${API_BASE}/api/create-tab`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({name})
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }   
+
+    location.href = `/tab.html?tabId=${data.tab_id}`;
+
+    loadTabs();
+}
+
+async function loadTabs() {
+    const res = await fetch(`${API_BASE}/api/tabs`, {
+        credentials: "include"
+    });
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    const list = document.getElementById("tabList");
+    list.innerHTML = "";
+
+    data.tabs.forEach(tab => {
+        const li = document.createElement("li");
+        li.innerHTML =
+            `<a href="edit-tab.html?tabId=${tab.id}">
+                ${tab.name}
+            </a>`;
+        list.appendChild(li);
+    });
+}
+
+loadTabs();
+</script>
+
+
+
+</html>

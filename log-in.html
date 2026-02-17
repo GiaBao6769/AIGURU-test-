@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<body>
+    <form id="LOGIN-FORM">
+        <fieldset>
+            <legend>Log in</legend>
+            <label>Username</label>
+            <input type="text" id="username" required>
+            <br><br>
+
+            <label>Password</label>
+            <input type="password" id="password" required>
+            <br><br>
+            
+            <p>Don't have an account? <a href="sign-up.html">Sign up</a>.</p>
+            <button>Login</button>
+
+        </fieldset>
+    </form>
+</body>
+
+<script type='module'>
+
+import {API_BASE} from "./preload.js"
+
+document.getElementById("LOGIN-FORM").onsubmit = async e => {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value;
+
+  const password = document.getElementById("password").value;
+
+  const res = await fetch(`${API_BASE}/api/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.errors.join("\n"));
+    return;
+  }
+
+  if (data.success) {
+    window.location.href = "home.html";
+  }
+};
+</script>
+
+
+</html>

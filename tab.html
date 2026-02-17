@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+
+<h2>Edit Diet Days</h2>
+
+<label>Day:</label>
+<input id="dayName" type="text" placeholder="e.g. Monday">
+
+<h3>Meals</h3>
+
+<input id="breakfast" placeholder="Breakfast"><br>
+<input id="lunch" placeholder="Lunch"><br>
+<input id="dinner" placeholder="Dinner"><br>
+
+<button onclick="createBlock()">Save Block</button>
+
+<h3>Saved Days</h3>
+<div id="daysContainer"></div>
+
+<script type="module">
+import {API_BASE} from "./preload.js"
+
+const urlParams = new URLSearchParams(window.location.search);
+const tabId = urlParams.get("tabId");
+
+async function createBlock() {
+    const day_name = document.getElementById("dayName").value;
+
+    const breakfast = document.getElementById("breakfast").value;
+    const lunch = document.getElementById("lunch").value;
+    const dinner = document.getElementById("dinner").value;
+
+    const res = await fetch(`${API_BASE}/api/tab/${tabId}/create-block`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+            day_name,
+            breakfast,
+            lunch,
+            dinner
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    loadBlocks();
+}
+
+async function loadBlocks() {
+    const res = await fetch(`${API_BASE}/api/tab/${tabId}/blocks`, {
+        credentials: "include"
+    });
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    const container = document.getElementById("daysContainer");
+    container.innerHTML = "";
+
+    data.blocks.forEach(d => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <h4>Day ${d.day_name}</h4>
+            Breakfast: ${d.breakfast}<br>
+            Lunch: ${d.lunch}<br>
+            Dinner: ${d.dinner}<br><br>
+        `;
+        container.appendChild(div);
+    });
+}
+
+loadBlocks();
+</script>
+
+<script type='module'>
+
+import {API_BASE} from "./preload.js"
+
+</script>
+
+
+</html>
